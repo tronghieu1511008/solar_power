@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Solar Sower - Main Dashboar</title>
+
+    <!-- Bootstrap core CSS-->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Page level plugin CSS-->
+    <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+    <!-- icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin.css" rel="stylesheet">
+    <!-- zoom picture -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .zoom {
+            padding: 30px;
+            /* background-color: green; */
+            transition: transform .2s;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+        }
+
+        .zoom:hover {
+            -ms-transform: scale(1.2);
+            /* IE 9 */
+            -webkit-transform: scale(1.2);
+            /* Safari 3-8 */
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <nav class="navbar navbar-expand navbar-dark bg-dark static-top" style="padding-top:1px;padding-bottom: 1px">
+
+        <a class="navbar-brand mr-1">
+            <% if(user.isAdmin == true){ %>
+            <a href="/mainDashboard" style='text-decoration: none;'> <span style="color: red; font-size: 18px ">Admin
+                    Dashboard</span></a>
+            <% } else{ %>
+            <a href="/mainDashboard" style='text-decoration: none;'><span style="color: white; font-size: 18px;"> Dashboard</span></a>
+            <% } %>
+        </a>
+
+        <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Navbar Search -->
+        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+            <!-- <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for..." aria-label="Search"
+              aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div> -->
+        </form>
+
+        <!-- Navbar -->
+        <ul class="navbar-nav ml-auto ml-md-0">
+            <!-- <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-bell fa-fw"></i>
+              <span class="badge badge-danger">9+</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+          </li> -->
+            <!-- <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-envelope fa-fw"></i>
+              <span class="badge badge-danger">7</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="messagesDropdown">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+          </li> -->
+            <li>
+                <p class="my-2" style="color: white">
+                    <td><%=user.email%></td>
+                </p>
+            </li>
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user-circle fa-lg"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <!-- <a class="dropdown-item" href="#">Settings</a> -->
+                    <!-- change password button -->
+                    <a class="dropdown-item" href="" data-toggle="modal" data-target="#editPassModal">
+                        <button class="btn btn-outline-dark" style="border: none"
+                            onclick="getNameIdEmail('<%= user.email%>','<%= user._id%>')"><i class="fa fa-pencil"></i>
+                            Edit
+                            Password</button></a>
+                    <!--  -->
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="" data-toggle="modal" data-target="#logoutModal">
+                        <button class="btn btn-outline-dark" style="border: none"
+                            onclick="getNameIdEmail('<%= user.email%>','<%= user._id%>')"><i class="fa fa-sign-out"></i>
+                            Logout</button>
+                    </a>
+                </div>
+            </li>
+        </ul>
+
+    </nav>
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="sidebar navbar-nav">
+            <!-- Dashboar navbar -->
+            <li class="nav-item " href="#dashboardArea" data-toggle="collapse">
+                <a class="nav-link " style="padding: 12px 10px">
+                    <i class="fa fa-tachometer"></i>
+                    <span style="font-size: 14px">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item collapse" id="dashboardArea">
+                <a class="nav-link" style="padding: 5px 10px">
+                    <span style="font-size: 14px;">--Area A--</span>
+                </a>
+                <a class="nav-link" href="/dashboard" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Solar AS-0</span>
+                </a>
+                <a class="nav-link" href="/dashboard_1" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Solar AS-1</span>
+                </a>
+                <a class="nav-link" style="padding: 5px 10px">
+                    <span style="font-size: 14px;">--Area B--</span>
+                </a>
+                <a class="nav-link" href="/dashboard_2" style="padding: 5px 10px">
+                    <span style="font-size: 13px">Solar BS-0</span>
+                </a>
+                <a class="nav-link" href="/dashboard_3" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Solar BS-1</span>
+                </a>
+                <hr style="border-color: white;margin: 0;padding: 0;">
+            </li>
+            <!-- Control navbar -->
+            <li class="nav-item " href="#controlArea" data-toggle="collapse">
+                <a class="nav-link " style="padding: 12px 10px">
+                    <i class="fa fa-cogs"></i>
+                    <span style="font-size: 14px">Control</span>
+                </a>
+            </li>
+            <li class="nav-item collapse" id="controlArea">
+                <a class="nav-link" style="padding: 2px 10px;">
+                    <span style="font-size: 14px;">--Area A--</span>
+                </a>
+                <a class="nav-link" href="/control" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Pump AP-0</span>
+                </a>
+                <a class="nav-link" href="/control_1" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Pump AP-1</span>
+                </a>
+                <a class="nav-link" style="padding: 2px 10px;">
+                    <span style="font-size: 14px;">--Area B--</span>
+                </a>
+                <a class="nav-link" href="/control_2" style="padding: 5px 10px">
+                    <span style="font-size: 13px">Pump BP-2</span>
+                </a>
+                <a class="nav-link" href="/control_3" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Pump BP-1</span>
+                </a>
+                <hr style="border-color: white;margin: 0;padding: 0;">
+            </li>
+            <!-- Report navbar -->
+            <li class="nav-item ">
+                <a class="nav-link " href="/report">
+                    <i class="fa fa-database"></i>
+                    <span style="font-size: 14px">Report</span>
+                </a>
+            </li>
+            <!-- Map navbar -->
+            <li class="nav-item ">
+                <a class="nav-link " href="/map">
+                    <i class="fa fa-map"></i>
+                    <span style="font-size: 14px">Map</span></a>
+            </li>
+            <!-- Accounts navbar -->
+            <% if(user.isAdmin == true){ %>
+            <li class="nav-item ">
+                <a class="nav-link " href="/admin">
+                    <i class="fa fa-user-circle-o"></i>
+                    <span style="font-size: 14px">Users</span></a>
+            </li>
+            <% } %>
+        </ul>
+
+        <div id="content-wrapper" style="padding: 0;margin: 0">
+
+            <div class="container-fluid" style="padding: 0">
+                <!-- top content -->
+                <div class="row" style="padding: 0;margin: 0">
+                    <!-- solar power -->
+                    <!-- Station AS-0 -->
+                    <div class=" col-sm-3 card" style="padding: 0px;">
+                        <div class="card-header bg-dark text-white"
+                            style="padding: 5px 10px;font-size: 19px;text-align: center">
+                            STATION AS-0
+                        </div>
+                        <div class=" card-body" style="padding: 0; margin: 0">
+                            <a href="/dashboard"><img class="zoom" src="/picture/solar_icon.png" alt="Solar img"
+                                    style="width:100%"></a>
+                            <div style="margin: 20px 20px">
+                                    <h5>Location: Area A</h5>
+                                    <h5>2 String (48 solar panels)</h5>
+                                    <h5>Power: 4200 Kw/Year</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Station AS-1 -->
+                    <div class=" col-sm-3 card" style="padding: 0px;">
+                        <div class="card-header bg-dark text-white"
+                            style="padding: 5px 10px;font-size: 19px;text-align: center">
+                            STATION AS-1
+                        </div>
+                        <div class=" card-body" style="padding: 0">
+                            <a href="/dashboard_1"><img class="zoom" src="/picture/solar_icon.png" alt="Solar img"
+                                    style="width:100%"></a>
+                            <div style="margin: 20px 20px">
+                                    <h5>Location: Area A</h5>
+                                    <h5>2 String (48 solar panels)</h5>
+                                    <h5>Power: 4700 Kw/Year</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Station BS-0 -->
+                    <div class=" col-sm-3 card" style="padding: 0px;">
+                        <div class="card-header bg-dark text-white"
+                            style="padding: 5px 10px;font-size: 19px;text-align: center">
+                            STATION BS-0
+                        </div>
+                        <div class=" card-body" style="padding: 0">
+                            <a href="/dashboard_2"><img class="zoom" src="/picture/solar_icon.png" alt="Solar img"
+                                    style="width:100%"></a>
+                            <div style="margin: 20px 20px">
+                                <h5>Location: Area B</h5>
+                                <h5>3 String (48 solar panels)</h5>
+                                <h5>Power: 6400 Kw/Year</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Station BS-1 -->
+                    <div class=" col-sm-3 card" style="padding: 0px;">
+                        <div class="card-header bg-dark text-white"
+                            style="padding: 5px 10px;font-size: 19px;text-align: center">
+                            STATION BS-0
+                        </div>
+                        <div class=" card-body" style="padding: 0">
+                            <a href="/dashboard_3"><img class="zoom" src="/picture/solar_icon.png" alt="Solar img"
+                                    style="width:100%"></a>
+                            <div style="margin: 20px 20px">
+                                    <h5>Location: Area B</h5>
+                                    <h5>3 String (48 solar panels)</h5>
+                                    <h5>Power: 5700 Kw/Year</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- change password Modal-->
+    <div class="modal fade" id="editPassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- content -->
+                <div class="modal-header card-header">
+                    <h5>Reset Password</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body card-body">
+                    <div class="text-center mb-4">
+                        <h6>Enter new password</h6>
+                    </div>
+                    <form action="/editPass" method="post">
+                        <!-- get Id -->
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <input type="hidden" name="inputIdEmail" id="inputIdEmail">
+                            </div>
+                        </div>
+                        <!-- get Name Email -->
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <input type="email" id="inputNameEmail" name="nameEmail" class="form-control"
+                                    placeholder="Email address" required="required" disabled>
+                                <label for="inputNameEmail">Email address</label>
+                            </div>
+                        </div>
+                        <!-- get Password -->
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <input type="password" id="replacePass" name="newPassword" class="form-control"
+                                    placeholder="Enter email address" required="required" autofocus="autofocus"
+                                    value="">
+                                <label for="replacePass">Enter password</label>
+                            </div>
+                            <div style="margin-top: 5px">
+                                <input type="checkbox" onclick="myFunction1()"> Show Password
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit">Change Password</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin.min.js"></script>
+    <!-- edit script -->
+    <script>
+        // thu navbar
+        window.addEventListener("load", function (event) {
+            $("body").toggleClass("sidebar-toggled");
+            $(".sidebar").toggleClass("toggled");
+        })
+        // change Password
+        function getNameIdEmail(nameEmail, idEmail01) {
+            console.log(nameEmail)
+            console.log(idEmail01)
+            $('#inputNameEmail').val(nameEmail);
+            $('#inputIdEmail').val(idEmail01);
+        };
+        // show password
+        function myFunction1() {
+            var x = document.getElementById("replacePass");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

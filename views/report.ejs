@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Solar Power - Report</title>
+
+    <!-- Bootstrap core CSS-->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Page level plugin CSS-->
+    <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+    <!-- library highcharts.com -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <!-- Excel -->
+    <script src="js/xlsx.full.min.js"></script>
+    <script src="js/FileSaver.min.js"></script>
+    <!-- icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin.css" rel="stylesheet">
+    <style>
+        /* .ui-datepicker-calendar {
+    display: none;
+    } */
+    </style>
+</head>
+
+<body id="page-top">
+
+    <nav class="navbar navbar-expand navbar-dark bg-dark static-top" style="padding-top:1px;padding-bottom: 1px">
+
+        <a class="navbar-brand mr-1">
+            <% if(user.isAdmin == true){ %>
+            <a href="/mainDashboard" style='text-decoration: none;'> <span style="color: red; font-size: 18px ">Admin
+                    Dashboard</span></a>
+            <% } else{ %>
+            <a href="/mainDashboard" style='text-decoration: none;'><span style="color: white; font-size: 18px;"> Dashboard</span></a>
+            <% } %>
+        </a>
+
+        <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Navbar Search -->
+        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+            <!-- <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for..." aria-label="Search"
+                    aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div> -->
+        </form>
+
+        <!-- Navbar -->
+        <ul class="navbar-nav ml-auto ml-md-0">
+            <!-- <li class="nav-item dropdown no-arrow mx-1">
+                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-bell fa-fw"></i>
+                    <span class="badge badge-danger">9+</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alertsDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li> -->
+            <!-- <li class="nav-item dropdown no-arrow mx-1">
+                <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-envelope fa-fw"></i>
+                    <span class="badge badge-danger">7</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="messagesDropdown">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li> -->
+            <li>
+                <p class="my-2" style="color: white">
+                    <td><%=user.email%></td>
+                </p>
+            </li>
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user-circle fa-lg"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <!-- <a class="dropdown-item" href="#">Settings</a> -->
+                    <!-- change password button -->
+                    <a class="dropdown-item" href="" data-toggle="modal" data-target="#editPassModal">
+                        <button class="btn btn-outline-dark" style="border: none"
+                            onclick="getNameIdEmail('<%= user.email%>','<%= user._id%>')"><i class="fa fa-pencil"></i>
+                            Edit
+                            Password</button></a>
+                    <!--  -->
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="" data-toggle="modal" data-target="#logoutModal">
+                        <button class="btn btn-outline-dark" style="border: none"
+                            onclick="getNameIdEmail('<%= user.email%>','<%= user._id%>')"><i class="fa fa-sign-out"></i>
+                            Logout</button>
+                    </a>
+                </div>
+            </li>
+        </ul>
+
+    </nav>
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="sidebar navbar-nav">
+            <!-- Dashboar navbar -->
+            <li class="nav-item " href="#dashboardArea" data-toggle="collapse">
+                <a class="nav-link " style="padding: 12px 10px">
+                    <i class="fa fa-tachometer"></i>
+                    <span style="font-size: 14px">Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item collapse" id="dashboardArea">
+                <a class="nav-link" style="padding: 5px 10px">
+                    <span style="font-size: 14px;">--Area A--</span>
+                </a>
+                <a class="nav-link" href="/dashboard" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Solar AS-0</span>
+                </a>
+                <a class="nav-link" href="/dashboard_1" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Solar AS-1</span>
+                </a>
+                <a class="nav-link" style="padding: 5px 10px">
+                    <span style="font-size: 14px;">--Area B--</span>
+                </a>
+                <a class="nav-link" href="/dashboard_2" style="padding: 5px 10px">
+                    <span style="font-size: 13px">Solar BS-0</span>
+                </a>
+                <a class="nav-link" href="/dashboard_3" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Solar BS-1</span>
+                </a>
+                <hr style="border-color: white;margin: 0;padding: 0;">
+            </li>
+            <!-- Control navbar -->
+            <li class="nav-item " href="#controlArea" data-toggle="collapse">
+                <a class="nav-link " style="padding: 12px 10px">
+                    <i class="fa fa-cogs"></i>
+                    <span style="font-size: 14px">Control</span>
+                </a>
+            </li>
+            <li class="nav-item collapse" id="controlArea">
+                <a class="nav-link" style="padding: 2px 10px;">
+                    <span style="font-size: 14px;">--Area A--</span>
+                </a>
+                <a class="nav-link" href="/control" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Pump AP-0</span>
+                </a>
+                <a class="nav-link" href="/control_1" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Pump AP-1</span>
+                </a>
+                <a class="nav-link" style="padding: 2px 10px;">
+                    <span style="font-size: 14px;">--Area B--</span>
+                </a>
+                <a class="nav-link" href="/control_2" style="padding: 5px 10px">
+                    <span style="font-size: 13px">Pump BP-0</span>
+                </a>
+                <a class="nav-link" href="/control_3" style="padding: 5px 10px">
+                    <span style="font-size: 13px;">Pump BP-1</span>
+                </a>
+                <hr style="border-color: white;margin: 0;padding: 0;">
+            </li>
+            <!-- Report navbar -->
+            <li class="nav-item active">
+                <a class="nav-link " href="/report">
+                    <i class="fa fa-database"></i>
+                    <span style="font-size: 14px">Report</span>
+                </a>
+            </li>
+            <!-- Map navbar -->
+            <li class="nav-item ">
+                <a class="nav-link " href="/map">
+                    <i class="fa fa-map"></i>
+                    <span style="font-size: 14px">Map</span></a>
+            </li>
+            <!-- Accounts navbar -->
+            <% if(user.isAdmin == true){ %>
+            <li class="nav-item ">
+                <a class="nav-link " href="/admin">
+                    <i class="fa fa-user-circle-o"></i>
+                    <span style="font-size: 14px">Users</span></a>
+            </li>
+            <% } %>
+        </ul>
+
+        <div id="content-wrapper" style="padding: 0px">
+
+            <div class="container-fluid" style="padding: 0px">
+                <!-- ------------------------------------- -->
+                <!-- ------------------------------------- -->
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#tabSolar">Solar Station AS-0</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#tabSolar_1">Solar Station AS-1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#tabSolar_2">Solar Station BS-0</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#tabSolar_3">Solar Station BS-1</a>
+                    </li>
+
+                </ul>
+
+                <!-- Tab panes -->
+                <!-- -------------------------------------------------------------------------- -->
+                <div class="tab-content">
+                    <div id="tabSolar" class="container tab-pane active"><br>
+                        <!-- <h3>Solar</h3> -->
+                        <!-- Solar power generate Report  -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i> Power
+                                    Generate</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartReport" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerGenerate">Download Excel</button>
+                        </div>
+                        <!-- solar power usage report -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i>
+                                    Power
+                                    Usage</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_powerUsage" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartPowerUsageReport" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerUsage">Download Excel</button>
+                        </div>
+                        <!-- solar power remain report -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i>
+                                    Power
+                                    Remain</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_powerRemain" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartPowerRemainReport" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerRemain">Download Excel</button>
+                        </div>
+                        <!-- content motor 00 report -->
+                        <!-- <h3>Motor </h3> -->
+                        <!-- Speed data report -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px;font-size: 19px">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i> Speed
+                                    Motor</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datep" /></span>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataSpeed" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Time</th>
+                                                <th>Speed</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <!-- <tfoot>
+                                <tr>
+                                  <th>Name</th>
+                                  <th>Position</th>
+                                  <th>Office</th>
+                                  <th>Age</th>
+                                  <th>Start date</th>
+                                  <th>Salary</th>
+                                </tr>
+                              </tfoot> -->
+                                        <tbody>
+                                            <!-- dữ liệu cập nhật từ file dat-month-year-picker.js -->
+                                            <!-- <tr>
+                                    <td>month/day/year</td>
+                                    <td>h:m:s</td>
+                                    <td>Number</td>
+                                    <td>Low/LowLow/High/HighHigh</td>
+                                </tr> -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end -->
+                    </div>
+                    <!-- -------------------------------------------------------------------------------------------------------- -->
+                    <div id="tabSolar_1" class="container tab-pane fade"><br>
+                        <!-- <h3>Menu 1</h3> -->
+                        <!-- Solar power generate Report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i> Power
+                                    Generate</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_1" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartReport_1" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerGenerate_1">Download Excel</button>
+                        </div>
+                        <!-- solar power usage report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i>
+                                    Power
+                                    Usage</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_powerUsage_1" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartPowerUsageReport_1" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerUsage_1">Download Excel</button>
+                        </div>
+                        <!-- solar power remain report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i>
+                                    Power
+                                    Remain</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_powerRemain_1" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartPowerRemainReport_1" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerRemain_1">Download Excel</button>
+                        </div>
+                        <!-- motor 1 report -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px;font-size: 19px">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i> Speed
+                                    Motor</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datep_1" /></span>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataSpeed_1" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Time</th>
+                                                <th>Speed</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <!-- dữ liệu cập nhật từ file dat-month-year-picker.js -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end -->
+                    </div>
+                    <!-- -------------------------------------------------------------------------------------------------- -->
+                    <!-- content power solar 2 -->
+                    <div id="tabSolar_2" class="container tab-pane fade"><br>
+                        <!-- <h3>Menu 1</h3> -->
+                        <!-- Solar power generate Report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i> Power
+                                    Generate</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_2" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartReport_2" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerGenerate_2">Download Excel</button>
+                        </div>
+                        <!-- solar power usage report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i>
+                                    Power
+                                    Usage</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_powerUsage_2" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartPowerUsageReport_2" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerUsage_2">Download Excel</button>
+                        </div>
+                        <!-- solar power remain report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i>
+                                    Power
+                                    Remain</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_powerRemain_2" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartPowerRemainReport_2" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerRemain_2">Download Excel</button>
+                        </div>
+                        <!-- motor 2 report -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px;font-size: 19px">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i> Speed
+                                    Motor</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datep_2" /></span>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataSpeed_2" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Time</th>
+                                                <th>Speed</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <!-- dữ liệu cập nhật từ file dat-month-year-picker.js -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end -->
+                    </div>
+                    <!-- ---------------------------------------------------------------------------------------- -->
+                    <!-- content power solar 3 -->
+                    <div id="tabSolar_3" class="container tab-pane fade"><br>
+                        <!-- <h3>Menu 1</h3> -->
+                        <!-- Solar power generate Report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i> Power
+                                    Generate</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_3" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartReport_3" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerGenerate_3">Download Excel</button>
+                        </div>
+                        <!-- solar power usage report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i>
+                                    Power
+                                    Usage</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_powerUsage_3" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartPowerUsageReport_3" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerUsage_3">Download Excel</button>
+                        </div>
+                        <!-- solar power remain report 1 -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px; font-size: 19px;">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i>
+                                    Power
+                                    Remain</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datepicker_powerRemain_3" /> </span>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChartPowerRemainReport_3" style="height: 200px;"></canvas>
+                            </div>
+                            <button type="button" class="btn btn-outline-success" id="btnExcelPowerRemain_3">Download Excel</button>
+                        </div>
+                        <!-- motor 3 report -->
+                        <div class="card mb-3">
+                            <div class="card-header bg-dark text-white" style="padding: 5px 10px;font-size: 19px">
+                                <span class="float-left"><i class="fa fa-table fa-lg" aria-hidden="true"></i> Speed
+                                    Motor</span>
+                                <span class="float-right"><i class="fa fa-calendar fa-lg" aria-hidden="true"></i> <input
+                                        type="text" id="datep_3" /></span>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataSpeed_3" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Time</th>
+                                                <th>Speed</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <!-- dữ liệu cập nhật từ file dat-month-year-picker.js -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end -->
+                    </div>
+
+                </div>
+                <!-- --------------------------- -->
+
+            </div>
+            <p class="small text-center text-muted my-5">
+                <em>More table examples coming soon...</em>
+            </p>
+
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- change password Modal-->
+    <div class="modal fade" id="editPassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- content -->
+                <div class="modal-header card-header">
+                    <h5>Reset Password</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body card-body">
+                    <div class="text-center mb-4">
+                        <h6>Enter new password</h6>
+                    </div>
+                    <form action="/editPass" method="post">
+                        <!-- get Id -->
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <input type="hidden" name="inputIdEmail" id="inputIdEmail">
+                            </div>
+                        </div>
+                        <!-- get Name Email -->
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <input type="email" id="inputNameEmail" name="nameEmail" class="form-control"
+                                    placeholder="Email address" required="required" disabled>
+                                <label for="inputNameEmail">Email address</label>
+                            </div>
+                        </div>
+                        <!-- get Password -->
+                        <div class="form-group">
+                            <div class="form-label-group">
+                                <input type="password" id="replacePass" name="newPassword" class="form-control"
+                                    placeholder="Enter email address" required="required" autofocus="autofocus"
+                                    value="">
+                                <label for="replacePass">Enter password</label>
+                            </div>
+                            <div style="margin-top: 5px">
+                                <input type="checkbox" onclick="myFunction1()"> Show Password
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit">Change Password</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Page level plugin JavaScript-->
+    <script src="vendor/datatables/jquery.dataTables.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin.min.js"></script>
+    <!-- bar power generate chart report demo -->
+    <script src="js/demo/chart-bar-chart-power-generate-report-demo.js"></script>
+    <script src="js/demo/chart-bar-chart-power-generate-report-demo-1.js"></script>
+    <script src="js/demo/chart-bar-chart-power-generate-report-demo-2.js"></script>
+    <script src="js/demo/chart-bar-chart-power-generate-report-demo-3.js"></script>
+    <!-- bar power usage chart report demo -->
+    <script src="js/demo/chart-bar-chart-power-usage-report-demo.js"></script>
+    <script src="js/demo/chart-bar-chart-power-usage-report-demo-1.js"></script>
+    <script src="js/demo/chart-bar-chart-power-usage-report-demo-2.js"></script>
+    <script src="js/demo/chart-bar-chart-power-usage-report-demo-3.js"></script>
+    <!-- bar power remain chart report demo -->
+    <script src="js/demo/chart-bar-chart-power-remain-report-demo.js"></script>
+    <script src="js/demo/chart-bar-chart-power-remain-report-demo-1.js"></script>
+    <script src="js/demo/chart-bar-chart-power-remain-report-demo-2.js"></script>
+    <script src="js/demo/chart-bar-chart-power-remain-report-demo-3.js"></script>
+    <!-- Demo scripts for this page-->
+    <script src="js/demo/datatables-demo.js"></script>
+    <!-- month year picker -->
+    <script src="js/month-year-picker.js"></script>
+    <script src="js/month-year-picker-1.js"></script>
+    <script src="js/month-year-picker-2.js"></script>
+    <script src="js/month-year-picker-3.js"></script>
+    <script src="js/day-month-year-picker.js"></script>
+    <link href="http://www.jquerycookbook.com/demos/css/jquery-ui.css" rel="stylesheet" />
+    <script src="http://www.jquerycookbook.com/demos/scripts/jquery-ui.min.js"></script>
+
+    <!-- edit script -->
+    <script>
+        // thu navbar
+        window.addEventListener("load", function (event) {
+            $("body").toggleClass("sidebar-toggled");
+            $(".sidebar").toggleClass("toggled");
+        })
+        // change Password
+        function getNameIdEmail(nameEmail, idEmail01) {
+            console.log(nameEmail)
+            console.log(idEmail01)
+            $('#inputNameEmail').val(nameEmail);
+            $('#inputIdEmail').val(idEmail01);
+        };
+        // show password
+        function myFunction1() {
+            var x = document.getElementById("replacePass");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+    <!-- Alarm data table -->
+    <script>
+
+    </script>
+</body>
+
+</html>
